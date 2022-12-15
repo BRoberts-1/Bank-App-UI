@@ -161,7 +161,7 @@ console.log(logo.getAttribute('designer'));
 // We can also set attributes(ie write them):
 logo.alt = 'Beautiful minimalist logo'; // changes our alt attribute
 // We can also set a new attribute:
-logo.setAttribue('company', 'Bankist');
+logo.setAttribute('company', 'Bankist');
 
 // To get an attribue on a link:
 const link = document.querySelector('.nav__link--btn');
@@ -172,17 +172,53 @@ console.log(link.getAttribute('href')); // returns: # like is in HTML
 
 // A special type of attribute that begins with the word data eg data-version-number="3.0" If we write this on our HTML logo element:
 // To read it:
-console.log(logo.dataset.versionNumber); // notice how we change our dashes into camelcase to read it, and we use 'dataset'. These attributes are always stored in the dataset object.
+// console.log(logo.dataset.versionNumber); // notice how we change our dashes into camelcase to read it, and we use 'dataset'. These attributes are always stored in the dataset object.
 
 // We use data attributes alot in the UI because we need to store data in the user interface(ie HTML code).
 
 // We can also add, remove, toggle, and check if it contains on classes:
-logo.classList.add('c', 'f');
-logo.classList.remove('c', 'f');
-logo.classList.toggle('c');
-logo.classList.contains('c'); // not .includes(), like in arrays
+// logo.classList.add('c', 'f');
+// logo.classList.remove('c', 'f');
+// logo.classList.toggle('c');
+// logo.classList.contains('c'); // not .includes(), like in arrays
 
 // Don't set a className like below line 186, instead use above methods.
 // logo.className = 'jonas'; //because it overrides existing classes and only allows us to put one class on the element
 
-//
+//  Section 188 - Implementing Smooth Scrolling
+
+// 1) Select the button(element) where you want the smooth scroll effect to originate(where to activate the scroll), AND also, to where you want it to scroll.
+
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+// 2) Add event listener function to button origin activate
+btnScrollTo.addEventListener('click', function (e) {
+  const s1coords = section1.getBoundingClientRect();
+  console.log(s1coords); //returns:
+
+  console.log(e.target.getBoundingClientRect()); // gives coordinates relative to viewport, not absolute to top of document
+
+  console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset); // we need it to scroll vertically, we need a certain y-coordinate
+  // We calculate it using the current coordinate + the current scroll
+  console.log(
+    'height/width viewport',
+    document.documentElement.clientHeight, // we can get the height and width relative to our viewport, the measurements exclude scroll bar
+    document.documentElement.clientWidth
+  );
+  // To actually implement scrolling effect
+  // window.scrollTo(
+  //   s1coords.left + window.pageXOffset,
+  //   s1coords.top + window.pageYOffset
+  // );
+
+  // To improve this we can replace our above arguments with an object:
+  // window.scrollTo({
+  //   left: s1coords.left + window.pageXOffset,
+  //   top: s1coords.top + window.pageYOffset,
+  //   behavior: 'smooth',
+  // }); // this is still, however, the old way of implementing the smooth scroll
+
+  // Here is the modern way(only works in modern browsers). We select our element we want to scroll to and add our .scrollIntoView() method with our object {behavior: 'smooth}
+  section1.scrollIntoView({ behavior: 'smooth' });
+});
