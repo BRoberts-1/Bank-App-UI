@@ -34,9 +34,64 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+/////////////////////////////////////////
+// BUTTON SCROLLING
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+// 2) Add event listener function to button origin activate
+btnScrollTo.addEventListener('click', function (e) {
+  const s1coords = section1.getBoundingClientRect();
+  console.log(s1coords); //returns:
+
+  console.log(e.target.getBoundingClientRect()); // gives coordinates relative to viewport, not absolute to top of document
+
+  console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset); // we need it to scroll vertically, we need a certain y-coordinate
+  // We calculate it using the current coordinate + the current scroll
+  console.log(
+    'height/width viewport',
+    document.documentElement.clientHeight, // we can get the height and width relative to our viewport, the measurements exclude scroll bar
+    document.documentElement.clientWidth
+  );
+  section1.scrollIntoView({ behavior: 'smooth' });
+});
+
+///////////////////////////////////////
+// PAGE NAVIGATION //
+
+// document.querySelectorAll('.nav__link').forEach(function (el) {
+//   el.addEventListener('click', function (e) {
+//     e.preventDefault();
+//     const id = this.getAttribute('href'); // this refers to element selected always
+//     console.log(id);
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+//   });
+// }); // this works fine, but we only have 3 elements here, and with our .forEach() method, that means that we are adding the eventhandler function to each of these elements. If there were 10,000 elements it would impact performance negatively.
+// The better solution here would be to use event delegation. We will place the eventlistener on a common parent of all the events we are interested in. When a user clicks the event bubbles up to the parent element and then executes the handler function only once for all the child elements. Basically, it is like making a giant button to contain all the links.
+
+// In event delegation we have two steps:
+// 1) We need the parent element common to our targeted elements
+// 2) Determine what element originated the event(ie what is the (event target) e.target) Use a matching strategy to see if target element has the same CLASS as the event target(e.target)
+
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  // console.log(e.target);
+  e.preventDefault();
+
+  // Matching strategy is just a way to check to see if we selected correctly. It is a test before we make a mistake.
+  if (e.target.classList.contains('nav__link')) {
+    // console.log('LINK-WORKS-DOO');
+
+    const id = e.target.getAttribute('href'); // this refers to element selected always
+    // console.log(id);
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// Another important use case of event delegation is when we are working with elements that are not yet present on the page on runtime e.g. buttons that are added dynamically while using the application
 ///////////////////////////////////////
 ///////////////////////////////////////
-///////////////////////////////////////
+
+// Section 186 - Selectng, Creating, and Deleting elements
 
 // Selecting elements
 // For the below special elements we don't have to write any selector
@@ -135,7 +190,7 @@ message.style.height =
 
 // CSS variables are defined in the document root(ie the document.Element). In CSS it appears like this: :root{}
 
-document.documentElement.style.setProperty('--color-primary', 'blue');
+// document.documentElement.style.setProperty('--color-primary', 'blue');
 // changes our variable color to blue: name, value
 // We can use this method to set all properties of any element
 // Practically it is easier to just use the inline-style method
@@ -189,54 +244,54 @@ console.log(link.getAttribute('href')); // returns: # like is in HTML
 
 // 1) Select the button(element) where you want the smooth scroll effect to originate(where to activate the scroll), AND also, to where you want it to scroll.
 
-const btnScrollTo = document.querySelector('.btn--scroll-to');
-const section1 = document.querySelector('#section--1');
+// const btnScrollTo = document.querySelector('.btn--scroll-to');
+// const section1 = document.querySelector('#section--1');
 
-// 2) Add event listener function to button origin activate
-btnScrollTo.addEventListener('click', function (e) {
-  const s1coords = section1.getBoundingClientRect();
-  console.log(s1coords); //returns:
+// // 2) Add event listener function to button origin activate
+// btnScrollTo.addEventListener('click', function (e) {
+//   const s1coords = section1.getBoundingClientRect();
+//   console.log(s1coords); //returns:
 
-  console.log(e.target.getBoundingClientRect()); // gives coordinates relative to viewport, not absolute to top of document
+//   console.log(e.target.getBoundingClientRect()); // gives coordinates relative to viewport, not absolute to top of document
 
-  console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset); // we need it to scroll vertically, we need a certain y-coordinate
-  // We calculate it using the current coordinate + the current scroll
-  console.log(
-    'height/width viewport',
-    document.documentElement.clientHeight, // we can get the height and width relative to our viewport, the measurements exclude scroll bar
-    document.documentElement.clientWidth
-  );
-  // To actually implement scrolling effect
-  // window.scrollTo(
-  //   s1coords.left + window.pageXOffset,
-  //   s1coords.top + window.pageYOffset
-  // );
+//   console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset); // we need it to scroll vertically, we need a certain y-coordinate
+//   // We calculate it using the current coordinate + the current scroll
+//   console.log(
+//     'height/width viewport',
+//     document.documentElement.clientHeight, // we can get the height and width relative to our viewport, the measurements exclude scroll bar
+//     document.documentElement.clientWidth
+//   );
+// To actually implement scrolling effect
+// window.scrollTo(
+//   s1coords.left + window.pageXOffset,
+//   s1coords.top + window.pageYOffset
+// );
 
-  // To improve this we can replace our above arguments with an object:
-  // window.scrollTo({
-  //   left: s1coords.left + window.pageXOffset,
-  //   top: s1coords.top + window.pageYOffset,
-  //   behavior: 'smooth',
-  // }); // this is still, however, the old way of implementing the smooth scroll
+// To improve this we can replace our above arguments with an object:
+// window.scrollTo({
+//   left: s1coords.left + window.pageXOffset,
+//   top: s1coords.top + window.pageYOffset,
+//   behavior: 'smooth',
+// }); // this is still, however, the old way of implementing the smooth scroll
 
-  // Here is the modern way(only works in modern browsers). We select our element we want to scroll to and add our .scrollIntoView() method with our object {behavior: 'smooth}
-  section1.scrollIntoView({ behavior: 'smooth' });
-});
+// Here is the modern way(only works in modern browsers). We select our element we want to scroll to and add our .scrollIntoView() method with our object {behavior: 'smooth}
+//   section1.scrollIntoView({ behavior: 'smooth' });
+// });
 
 // Section 189 - Types of Events and Event Handlers
 
 // An event occurs and is logged whether we listen for the event or not.
 // Event Listeners
-const h1 = document.querySelector('h1');
+// const h1 = document.querySelector('h1');
 
-const alertH1 = function (e) {
-  alert('addEventListener: Great! You are reading the heading.');
+// const alertH1 = function (e) {
+//   alert('addEventListener: Great! You are reading the heading.');
 
-  h1.removeEventListener('mouseenter', alertH1);
-};
+//   h1.removeEventListener('mouseenter', alertH1);
+// };
 
-// mouseenter is hover of mouse over that element
-h1.addEventListener('mouseenter', alertH1);
+// // mouseenter is hover of mouse over that element
+// h1.addEventListener('mouseenter', alertH1);
 
 // h1.removeEventListener('mouseenter', alertH1);
 
@@ -278,34 +333,34 @@ h1.addEventListener('mouseenter', alertH1);
 // We will give our navigation bar elements eventhandlers and then see how the same 'click' event on one link can be handled by all the parent elements as well. We will use a random number genererator and then use it to generate a random color selectin for our elements:
 
 // rgb(255, 255, 255);
-const randomInt = (min, max) =>
-  Math.floor(Math.random() * (max - min + 1) + min);
-const randomColor = () =>
-  `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`;
+// const randomInt = (min, max) =>
+//   Math.floor(Math.random() * (max - min + 1) + min);
+// const randomColor = () =>
+//   `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`;
 
-document.querySelector('.nav__link').addEventListener('click', function (e) {
-  this.style.backgroundColor = randomColor();
-  console.log('LINKCHILD', e.target, e.currentTarget);
-  console.log(e.currentTarget === this); // returns: true
+// document.querySelector('.nav__link').addEventListener('click', function (e) {
+//   this.style.backgroundColor = randomColor();
+//   console.log('LINKCHILD', e.target, e.currentTarget);
+//   console.log(e.currentTarget === this); // returns: true
 
-  // We can stop event propagation with a method, however, not a good practice.
-  // e.stopPropagation(); // This might be used if you have a complex application with many handlers for the same event.
-});
-// e.target is where the click happened, not where the event happened.
-// e.currentTarget is where the eventhandler is attached
+//   // We can stop event propagation with a method, however, not a good practice.
+//   // e.stopPropagation(); // This might be used if you have a complex application with many handlers for the same event.
+// });
+// // e.target is where the click happened, not where the event happened.
+// // e.currentTarget is where the eventhandler is attached
 
-document.querySelector('.nav__links').addEventListener('click', function (e) {
-  this.style.backgroundColor = randomColor();
-  console.log('CONTAINERNAVCHILD', e.target, e.currentTarget);
-});
+// document.querySelector('.nav__links').addEventListener('click', function (e) {
+//   this.style.backgroundColor = randomColor();
+//   console.log('CONTAINERNAVCHILD', e.target, e.currentTarget);
+// });
 
-document.querySelector('.nav').addEventListener(
-  'click',
-  function (e) {
-    this.style.backgroundColor = randomColor();
-    console.log('PARENTOFALL', e.target, e.currentTarget);
-  } // adding a 'true' parameter here after a comma gives us the PARENTOFALL(it happens on capture phase)
-); // 3rd parameter-if we set this parameter to true, it will use Capture parameter and will no longer listen to bubbling events and instead will handle on capture phase.
+// document.querySelector('.nav').addEventListener(
+//   'click',
+//   function (e) {
+//     this.style.backgroundColor = randomColor();
+//     console.log('PARENTOFALL', e.target, e.currentTarget);
+//   } // adding a 'true' parameter here after a comma gives us the PARENTOFALL(it happens on capture phase)
+// ); // 3rd parameter-if we set this parameter to true, it will use Capture parameter and will no longer listen to bubbling events and instead will handle on capture phase.
 
 // When you click on the feature link, a random color is generated for itself and all the parent elements including the whole parent nav links container and its parent container. If you click just the parent container only the outer parent container gets a random color because only the parents get event and not the children. Meaning, if you will click on the actual like then three events happen. As you go outwards and click less events happen.
 
@@ -313,3 +368,9 @@ document.querySelector('.nav').addEventListener(
 // However, we can do it if we want:
 
 // The only reason capturing and bubbling exists is b/c historically browsers implemented different versions of JS.
+
+////////////////////////////////////
+// Section 192 - Event Delegation: Implementing Page Navigation
+
+// We will implement smooth scrolling for our application for the navigation links using event delegation.
+//
