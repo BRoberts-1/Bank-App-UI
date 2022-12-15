@@ -372,5 +372,50 @@ console.log(link.getAttribute('href')); // returns: # like is in HTML
 ////////////////////////////////////
 // Section 192 - Event Delegation: Implementing Page Navigation
 
-// We will implement smooth scrolling for our application for the navigation links using event delegation.
-//
+// We will implement smooth scrolling for our application for the navigation links using event delegation. See above line 76.
+
+// Section 193 - DOM Traversing - REFERENCE
+
+// Walking throught the DOM, ie selecting an element based on another element. This is important because sometimes you need to select a direct child or direct parent element.
+
+// We will use the <h1></h1> element and go traversing in every direction:
+
+const h1 = document.querySelector('h1');
+
+// Going downwards: children
+
+// we will select the <span></span> elements with class="highlight"
+console.log(h1.querySelectorAll('.highlight'));
+console.log(h1.childNodes); //returns: (9 nodes)text, comments, elements
+console.log(h1.children); // returns:updated HTMLcollection of our elements(best to use this to see what elements are in h1(keep in mind only works for direct children and not nested children))
+// We can use .firstElementChild and .lastElementChild to select elements within DOM tree
+h1.firstElementChild.style.color = 'white';
+h1.lastElementChild.style.color = 'blue';
+// Important!! to know .querySelector and .querySelectorAll(): those methods will select all child elements, no matter how deep they are nested in the DOM tree, of the h1 element.  Also, only the children of the h1 element with the classname 'highlight' will be selected and not just any elements on the page with same classname.
+
+// Going upwards: parents
+console.log(h1.parentNode); // direct parent - similar to .childNodes
+console.log(h1.parentElement); // usually the one we want
+
+// If we need to find a parent element that is not a direct parent, but further away in the DOM tree we use .closest() method
+console.log(h1.closest('.header'));
+h1.closest('.header').style.background = 'var(--gradient-secondary)'; // the .closest() method is used all the time for event delegation.
+h1.closest('h1').style.background = 'var(--gradient-primary)'; // the .closest() method is used all the time for event delegation.
+
+// Going sideways: siblings
+
+// In JS, we can only select the direct sibling(ie the previous and the next)
+
+// We can select sibling elements or by proxy elements sibling eg:
+console.log(h1.previousElementSibling); // returns: null
+console.log(h1.nextElementSibling); // returns: h4
+
+console.log(h1.previousSibling); // returns: text
+console.log(h1.nextSibling); // returns: text
+
+// If you need all the children and not just the previous or the next, then you can move up to the parent element and then read all the children from there.(ie all the siblings together)
+console.log(h1.parentElement.children); // returns: an HTML collection of all children
+// We can spread this collection into an array, an then loop over it and do something to each child in array
+[...h1.parentElement.children].forEach(function (el) {
+  if (el !== h1) el.style.transform = 'scale(0.5)';
+}); // all children of h1 are scaled down by 50% on display
