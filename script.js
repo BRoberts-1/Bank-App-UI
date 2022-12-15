@@ -272,3 +272,44 @@ h1.addEventListener('mouseenter', alertH1);
 // Most events do have the three phases, but some events only have the Target Phase.
 
 // Because most events have all three phases: Capture, Target, and Bubbling Phase we can say that the events in JS propagate.
+
+// Section 191 - Event Propagation in Practice
+
+// We will give our navigation bar elements eventhandlers and then see how the same 'click' event on one link can be handled by all the parent elements as well. We will use a random number genererator and then use it to generate a random color selectin for our elements:
+
+// rgb(255, 255, 255);
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+const randomColor = () =>
+  `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`;
+
+document.querySelector('.nav__link').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('LINKCHILD', e.target, e.currentTarget);
+  console.log(e.currentTarget === this); // returns: true
+
+  // We can stop event propagation with a method, however, not a good practice.
+  // e.stopPropagation(); // This might be used if you have a complex application with many handlers for the same event.
+});
+// e.target is where the click happened, not where the event happened.
+// e.currentTarget is where the eventhandler is attached
+
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('CONTAINERNAVCHILD', e.target, e.currentTarget);
+});
+
+document.querySelector('.nav').addEventListener(
+  'click',
+  function (e) {
+    this.style.backgroundColor = randomColor();
+    console.log('PARENTOFALL', e.target, e.currentTarget);
+  } // adding a 'true' parameter here after a comma gives us the PARENTOFALL(it happens on capture phase)
+); // 3rd parameter-if we set this parameter to true, it will use Capture parameter and will no longer listen to bubbling events and instead will handle on capture phase.
+
+// When you click on the feature link, a random color is generated for itself and all the parent elements including the whole parent nav links container and its parent container. If you click just the parent container only the outer parent container gets a random color because only the parents get event and not the children. Meaning, if you will click on the actual like then three events happen. As you go outwards and click less events happen.
+
+// Usually it is not useful for us to use capture phase and that is why, by default event handlers occur in the target and bubbling phase.
+// However, we can do it if we want:
+
+// The only reason capturing and bubbling exists is b/c historically browsers implemented different versions of JS.
