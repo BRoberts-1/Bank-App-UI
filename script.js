@@ -222,3 +222,36 @@ btnScrollTo.addEventListener('click', function (e) {
   // Here is the modern way(only works in modern browsers). We select our element we want to scroll to and add our .scrollIntoView() method with our object {behavior: 'smooth}
   section1.scrollIntoView({ behavior: 'smooth' });
 });
+
+// Section 189 - Types of Events and Event Handlers
+
+// An event occurs and is logged whether we listen for the event or not.
+// Event Listeners
+const h1 = document.querySelector('h1');
+
+const alertH1 = function (e) {
+  alert('addEventListener: Great! You are reading the heading.');
+
+  h1.removeEventListener('mouseenter', alertH1);
+};
+
+// mouseenter is hover of mouse over that element
+h1.addEventListener('mouseenter', alertH1);
+
+// h1.removeEventListener('mouseenter', alertH1);
+
+// We can achieve same results by using a method called .onmouseenter() on our h1 element, however, this is old way, use addEventListener instead:
+// h1.onmouseenter = function (e) {
+//   alert(
+//     'onmouseenter: Great! You are reading the heading, exactly like we planned for you to do.'
+//   );
+// };
+
+// We use .addEventListener nowadays because it allows us to add multiple EventHandlers to the same event. We cannot do this on the other .onmouseenter because the 2nd function would override the first function.
+
+// We can also REMOVE the EventHandler if we need. See above on line 238. This way the event handler only handles it one time and not every time we hover over that element.
+
+// We can also REMOVE the EventHandler after a certain amount of time has passed:
+// setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
+
+// A third way of handlingEvents which should NOT be used is to add an attribute to an HTML element in the HTML file eg. on the h1 element adding will look like this: <h1 onclick="alert('HTML alert')"></h1> Weird old-school JS.
