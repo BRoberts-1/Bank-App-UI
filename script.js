@@ -104,4 +104,85 @@ document
     message.parentElement.removeChild(message);
   });
 
-// moveing up and down in the DOM is called DOM traversing
+// moving up and down in the DOM is called DOM traversing
+
+// Section 187 - Styles, Attributes and Classes
+
+// Styles
+message.style.backgroundColor = '#37383d'; // colors our element bkgd
+message.style.width = '120%'; // expands our box containing our element
+
+// These styles are added as inline-styles(ie it becomes written into the HTML with the style attribute)
+
+// Inline styles that we set manually for ourselves can be logged ie read, other styles cannot be read eg:
+console.log(message.style.height); // returns: nothing b/c cannot read
+console.log(message.style.backgroundColor); // returns: rgb(55, 56, 61)
+
+// If we want to get the styles which are saved as classes or anywhere else we use getComputedStyle():
+console.log(getComputedStyle(message).color); // returns: our color above. Important to note that all properties are returned, so you have to specify which property you want. Like in our case, we specified .color
+
+// The term computedstyle means the rendered style after processing.
+
+// Another example would be to get the height and then add height to make it bigger:
+console.log(getComputedStyle(message).height); // returns: 43.6667px
+
+// To add to it we will take it, change it to a number, because it will be a string and then add to it.
+message.style.height =
+  Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
+// this adds 30px of height to our container with our message.
+
+// CSS variable are called custom properties, you can change a value in one place and all other places where variable exist it will change. Like a dial on a machine where you change settings for whole machine.
+
+// CSS variables are defined in the document root(ie the document.Element). In CSS it appears like this: :root{}
+
+document.documentElement.style.setProperty('--color-primary', 'blue');
+// changes our variable color to blue: name, value
+// We can use this method to set all properties of any element
+// Practically it is easier to just use the inline-style method
+
+// Attributes
+//eg src, alt, class, id are all attributes
+
+// We can select them:
+const logo = document.querySelector('.nav__logo');
+console.log(logo.alt); //returns: Bankist logo
+
+console.log(logo.src); // returns: the absolute url https://etc..., as opposed to the relative url we have in our HTML file.
+// To get the relative url:
+console.log(logo.getAttribute('src'));
+
+// We can also get the className:
+console.log(logo.className); // returns: nav__logo
+
+console.log(logo.designer); //even if property exist, it will not return anything because it is not part of default properties on the element
+// If we want to return an attribute that is not standard ie read it:
+console.log(logo.getAttribute('designer'));
+
+// We can also set attributes(ie write them):
+logo.alt = 'Beautiful minimalist logo'; // changes our alt attribute
+// We can also set a new attribute:
+logo.setAttribue('company', 'Bankist');
+
+// To get an attribue on a link:
+const link = document.querySelector('.nav__link--btn');
+console.log(link.href); // returns: absolute url
+console.log(link.getAttribute('href')); // returns: # like is in HTML
+
+// Data attributes
+
+// A special type of attribute that begins with the word data eg data-version-number="3.0" If we write this on our HTML logo element:
+// To read it:
+console.log(logo.dataset.versionNumber); // notice how we change our dashes into camelcase to read it, and we use 'dataset'. These attributes are always stored in the dataset object.
+
+// We use data attributes alot in the UI because we need to store data in the user interface(ie HTML code).
+
+// We can also add, remove, toggle, and check if it contains on classes:
+logo.classList.add('c', 'f');
+logo.classList.remove('c', 'f');
+logo.classList.toggle('c');
+logo.classList.contains('c'); // not .includes(), like in arrays
+
+// Don't set a className like below line 186, instead use above methods.
+// logo.className = 'jonas'; //because it overrides existing classes and only allows us to put one class on the element
+
+//
