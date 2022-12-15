@@ -255,3 +255,20 @@ h1.addEventListener('mouseenter', alertH1);
 // setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
 
 // A third way of handlingEvents which should NOT be used is to add an attribute to an HTML element in the HTML file eg. on the h1 element adding will look like this: <h1 onclick="alert('HTML alert')"></h1> Weird old-school JS.
+
+// Section 190 - Event Propagation: Bubbling and Capturing
+
+// There are three phases of an event:
+// 1) Capturing Phase
+// 2) Target Phase
+// 3) Bubbling Phase
+
+// When there is an eventlistener and then an event occurs, the event actually occurs in the root of the document. This is called the "Capturing Phase." The event then makes it way down the DOM Tree to the target element. When it arrives at the target element this is called the "Target Phase".  After this the event then 'bubbles' up to the Root element traveling through all the parent elements of the target element. This is called the "Bubbling Phase".
+
+// This is important because as the event travels up and down the DOM tree it is as if the event occurs in all those elements as well. We can use this to manipulate the DOM even more.
+
+// By default, events can only be handled in the Target Phase and the Bubbling Phase, and not the Capturing Phase, but this default can be changed to include the Capturing Phase as well.
+
+// Most events do have the three phases, but some events only have the Target Phase.
+
+// Because most events have all three phases: Capture, Target, and Bubbling Phase we can say that the events in JS propagate.
