@@ -389,8 +389,8 @@ console.log(h1.querySelectorAll('.highlight'));
 console.log(h1.childNodes); //returns: (9 nodes)text, comments, elements
 console.log(h1.children); // returns:updated HTMLcollection of our elements(best to use this to see what elements are in h1(keep in mind only works for direct children and not nested children))
 // We can use .firstElementChild and .lastElementChild to select elements within DOM tree
-h1.firstElementChild.style.color = 'white';
-h1.lastElementChild.style.color = 'blue';
+// h1.firstElementChild.style.color = 'white';
+// h1.lastElementChild.style.color = 'blue';
 // Important!! to know .querySelector and .querySelectorAll(): those methods will select all child elements, no matter how deep they are nested in the DOM tree, of the h1 element.  Also, only the children of the h1 element with the classname 'highlight' will be selected and not just any elements on the page with same classname.
 
 // Going upwards: parents
@@ -398,9 +398,9 @@ console.log(h1.parentNode); // direct parent - similar to .childNodes
 console.log(h1.parentElement); // usually the one we want
 
 // If we need to find a parent element that is not a direct parent, but further away in the DOM tree we use .closest() method
-console.log(h1.closest('.header'));
-h1.closest('.header').style.background = 'var(--gradient-secondary)'; // the .closest() method is used all the time for event delegation.
-h1.closest('h1').style.background = 'var(--gradient-primary)'; // the .closest() method is used all the time for event delegation.
+// console.log(h1.closest('.header'));
+// h1.closest('.header').style.background = 'var(--gradient-secondary)'; // the .closest() method is used all the time for event delegation.
+// h1.closest('h1').style.background = 'var(--gradient-primary)'; // the .closest() method is used all the time for event delegation.
 
 // Going sideways: siblings
 
@@ -416,6 +416,55 @@ console.log(h1.nextSibling); // returns: text
 // If you need all the children and not just the previous or the next, then you can move up to the parent element and then read all the children from there.(ie all the siblings together)
 console.log(h1.parentElement.children); // returns: an HTML collection of all children
 // We can spread this collection into an array, an then loop over it and do something to each child in array
-[...h1.parentElement.children].forEach(function (el) {
-  if (el !== h1) el.style.transform = 'scale(0.5)';
-}); // all children of h1 are scaled down by 50% on display
+// [...h1.parentElement.children].forEach(function (el) {
+//   if (el !== h1) el.style.transform = 'scale(0.5)';
+// }); // all children of h1 are scaled down by 50% on display
+
+// Section 194 - Building a Tabbed Component
+
+// Two compoments:
+// 1) Tabs
+// 2) Content changes(is revealed) as you click on different tabs
+
+// The entire component on our site has classname="operations"
+// Then there is the tab container(each tab is a button with a few classes")that has the three tabs classname="operations__tab-container"
+// Below that we have our content. It is actually three seperate contents(1 for each tab)
+// Effect occurs because as you click on one tab to display content, you hide the other content automatically. We will toggle classes on and off to switch from hidden to revealed. Each content div has a data-tab attribute which will help us select it later.
+
+// To build our Tabbed Component
+
+// 1) Select all of our components and save to variables
+// use .querySelectorAll when there is more than one element to select
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+
+// 2) Add event handlers to the buttons
+// Don't do this:
+// tabs.forEach(t => t.addEventListener('click', () => console.log('TAB')));
+
+// Use event delegation instead:
+tabsContainer.addEventListener('click', function (e) {
+  const clicked = e.target.closest('.operations__tab'); // we want the closest parent element to the elements with the class "operations__tab". We need this because we have siblings inside of the buttons(a span element and the button element)
+  console.log(clicked);
+
+  // Now we must ignore any clicks where the result is null, because it throws an error. It throws an error because JS is trying to execute the .add() code seen below.
+
+  // We make a guard clause:
+  if (!clicked) return; // if clicked does not equal above then return, else next code.
+  // this guard clause could be written like this, but the above is more modern.
+  // if (clicked) {
+  //   clicked.classList.add('operations__tab--active')
+  // }
+  // In order to have only one tab raised up, then we just code the class that makes them raise up be removed before we add the class to the one button that is clicked.
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+
+  clicked.classList.add('operations__tab--active'); // we add this class when clicked to change the position of the button to a little upward, relative to the other buttons.
+
+  // Now we have to active the content area with the click of the tab button:
+  console.log(clicked.dataset.tab);
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active'); //this works because in our CSS file the --active class has all the styling while the other classes have just display: none;
+});
