@@ -101,7 +101,7 @@ console.log(document.head); // selects entire head element
 console.log(document.body); // selcets entire body element
 
 // We can also use .querySelector('.element')
-const header = document.querySelector('.header'); // returns first element with this name
+// const header = document.querySelector('.header'); // returns first element with this name
 
 // If we want to select many elements with the same name we use .querySelectorALL()
 const allSections = document.querySelectorAll('.section'); // returns all the many elements with name
@@ -561,3 +561,55 @@ window.addEventListener('scroll', function (e) {
 // The above way works, but it is not the best way. We will do the best way next.
 
 // Section 197 - A Better Way: The Intersection Observer API
+
+// It is exactly as the name implies: once you hit an intersection of two elements the event is triggered.
+
+// Start by creating a new Intersectional Observer:
+// We pass in a callback function and an object of objects.
+// We store it in a variable and then have it observe a certain target by using the method .observer()
+// We create a callback function saved in a variable(here it is obsCallBack) as well as an object saved into a variable(here it is called obsOptions)
+// Put those variables as arguments into our function
+// We need a 'root' property for our object. This root property has a value that is the element that we want the target to intersect. Or does intersect?
+// Next property is 'threshold' which is the percentage of the intersection at which the callback function will be called.(it is a percentage eg 0.1 is 10%)
+// You can have multiple thresholds(ie an array as a value)
+// So the callback function is triggered everytime our observed element(ie target element)crosses with the root element at the threshold we defined. Here our root element in the viewport, so when viewport sees 10% of section1(ie when 10% comes into viewport screen), it triggers the callback function
+// The callback function gets called with two parameters. 1) the entries(ie the intersectionobserver entries) and 2) the observer
+// const obsCallback = function (entries, observer) {
+//   entries.forEach(entry => {
+//     console.log(entry); //this loop logs all of our entries
+//   });
+// };
+// // const obsCallback = function (entries, observer) {};
+
+// const obsOptions = {
+//   root: null, // null here means the viewport
+//   threshold: 0.1,
+// };
+
+// const observer = new IntersectionObserver(obsCallback, obsOptions);
+// observer.observe(section1);
+
+// We want our navigation to appear and be 'sticky' when our header or hero section is completely out of our viewport
+
+// We will create a new observer below based on our header.
+
+// So we start by selecting our header element:
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height; // our height property on our nav element
+console.log(navHeight);
+
+const stickyNav = function (entries) {
+  const [entry] = entries; //destructing our entries into an array
+
+  if (!entry.isIntersection) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null, // null is viewport. also default is viewport if not specified
+  threshold: 0, // 0 here means when header is no longer visible(ie 0 percent of our header in viewport, here we went the opposite way as above)
+  rootMargin: `-${navHeight}px`, // adds a margin to our navbar height to allow it to appear exactly in the space where the header section is disappearing
+});
+
+// finally we call our observer function
+headerObserver.observe(header);
