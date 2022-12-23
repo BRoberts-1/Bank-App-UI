@@ -539,3 +539,25 @@ const handleHover = function (e) {
 // It is impossible to pass another argument besides e, into and event handler function. If you want to pass something beside event, then you must use the .bind() method. If you want to pass multiple values into the event handler then you would set the argument of the .bind() method as an array or an object.
 nav.addEventListener('mouseover', handleHover.bind(0.5)); // we need opacity of 0.5 here
 nav.addEventListener('mouseout', handleHover.bind(1)); // we need opacity of 1 here
+
+// Section 196 - Implementing a Sticky Navigation: The Scroll Event
+
+// Sticky Navigation
+// Scroll event available on the window:
+// Scroll Event is not efficient, because any scrolling activates it and creates a bunch of events
+// first, we cl to find position of our scroll event on the y-axis: 0 is top of page, and as we scroll it changes.
+// For the nav-bar to be "sticky", we need to add 'sticky' class, and then decide where the nav bar should start being sticky.(Ans: the beginning of the 1st section-we need to calculate this dynamically because the viewport size determines ie changes where the 1st section will start.):
+const initialCoords = section1.getBoundingClientRect();
+console.log(initialCoords);
+//this gives us all of our coordinates in an object which we then manipulate
+
+// then we take our vertical axis scroll coordinates which occur as scroll event. Once we scroll past the initialCoords.top for the 1st section of our page selector(variable stored above on section of button scrolling) ie. window.scrollY > initialCoords.top, then we will add our 'sticky' class to our 'nav' element (we selected and stored it in a variable above. See top of file.), and if this condition is not met then, else remove the 'sticky' class.
+window.addEventListener('scroll', function (e) {
+  console.log(window.scrollY);
+
+  if (this.window.scrollY > initialCoords.top) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+});
+// The above way works, but it is not the best way. We will do the best way next.
+
+// Section 197 - A Better Way: The Intersection Observer API
