@@ -7,6 +7,7 @@ const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+const nav = document.querySelector('.nav');
 
 const openModal = function (e) {
   e.preventDefault();
@@ -128,14 +129,14 @@ console.log(document.getElementsByClassName('btn')); // returns collection
 
 // To create an element programmatically from scratch:
 // We save it to a variable and then can reuse it
-const message = document.createElement('div'); // creates a div element
-message.classList.add('cookie-message'); // adds a class to our created element(see how variable is useful) This class was already created in the CSS of this project.
+// const message = document.createElement('div'); // creates a div element
+// message.classList.add('cookie-message'); // adds a class to our created element(see how variable is useful) This class was already created in the CSS of this project.
 // message.textContent =
 //   'We use cookies for improved functionality and analytics.'; // .textContent adds text to our element.
 // we can also insert HTML and not just text to our element eg:
 // We can use both .textContent() and .innerHTML() to READ and SET content
-message.innerHTML =
-  'We use cookies for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button>'; // adds a button with 'Got it!' string
+// message.innerHTML =
+//   'We use cookies for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button>'; // adds a button with 'Got it!' string
 // header.prepend(message); // variable 'header' is saved at top(it selects the header), then we use .prepend() to add this element as the first child of header element, it is saved in variable 'message' to it.
 // header.append(message); // adds it as last child of header element
 // the message can only be in one place at a time so it takes the last instance in order of code
@@ -145,45 +146,45 @@ message.innerHTML =
 
 // Can also insert elements outside of elements(ie as siblings, not as children) using .before() and .after()
 
-header.before(message); // inserts as sibling before header element
+// header.before(message); // inserts as sibling before header element
 // header.after(message); // inserts as sibling after heading element
 
 // Deleting elements
 
 // Let's delete the message button we created when the user clicks on it:
-document
-  .querySelector('.btn--close-cookie')
-  .addEventListener('click', function () {
-    // message.remove(); // this is a new method
-    // it used to be you had to select parent element first then child to delete it.
-    message.parentElement.removeChild(message);
-  });
+// document
+//   .querySelector('.btn--close-cookie')
+//   .addEventListener('click', function () {
+//     // message.remove(); // this is a new method
+//     // it used to be you had to select parent element first then child to delete it.
+//     message.parentElement.removeChild(message);
+//   });
 
 // moving up and down in the DOM is called DOM traversing
 
 // Section 187 - Styles, Attributes and Classes
 
 // Styles
-message.style.backgroundColor = '#37383d'; // colors our element bkgd
-message.style.width = '120%'; // expands our box containing our element
+// message.style.backgroundColor = '#37383d'; // colors our element bkgd
+// message.style.width = '120%'; // expands our box containing our element
 
-// These styles are added as inline-styles(ie it becomes written into the HTML with the style attribute)
+// // These styles are added as inline-styles(ie it becomes written into the HTML with the style attribute)
 
-// Inline styles that we set manually for ourselves can be logged ie read, other styles cannot be read eg:
-console.log(message.style.height); // returns: nothing b/c cannot read
-console.log(message.style.backgroundColor); // returns: rgb(55, 56, 61)
+// // Inline styles that we set manually for ourselves can be logged ie read, other styles cannot be read eg:
+// console.log(message.style.height); // returns: nothing b/c cannot read
+// console.log(message.style.backgroundColor); // returns: rgb(55, 56, 61)
 
 // If we want to get the styles which are saved as classes or anywhere else we use getComputedStyle():
-console.log(getComputedStyle(message).color); // returns: our color above. Important to note that all properties are returned, so you have to specify which property you want. Like in our case, we specified .color
+// console.log(getComputedStyle(message).color); // returns: our color above. Important to note that all properties are returned, so you have to specify which property you want. Like in our case, we specified .color
 
-// The term computedstyle means the rendered style after processing.
+// // The term computedstyle means the rendered style after processing.
 
-// Another example would be to get the height and then add height to make it bigger:
-console.log(getComputedStyle(message).height); // returns: 43.6667px
+// // Another example would be to get the height and then add height to make it bigger:
+// console.log(getComputedStyle(message).height); // returns: 43.6667px
 
-// To add to it we will take it, change it to a number, because it will be a string and then add to it.
-message.style.height =
-  Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
+// // To add to it we will take it, change it to a number, because it will be a string and then add to it.
+// message.style.height =
+//   Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
 // this adds 30px of height to our container with our message.
 
 // CSS variable are called custom properties, you can change a value in one place and all other places where variable exist it will change. Like a dial on a machine where you change settings for whole machine.
@@ -468,3 +469,73 @@ tabsContainer.addEventListener('click', function (e) {
     .querySelector(`.operations__content--${clicked.dataset.tab}`)
     .classList.add('operations__content--active'); //this works because in our CSS file the --active class has all the styling while the other classes have just display: none;
 });
+
+// Menu fade animation
+
+// mouseover bubbles while mouseenter does not
+// We pass arguments into event handlers by using the .bind() method and the 'this' keyword
+
+// First we select our parent element which has the children we want to have an eventlistener on: const nav = document.querySelector(".nav");
+// Then we add our eventListener on top of it.
+// Then, we check if our target element contains our links
+// Then, we save our target into a variable
+// We save our sibling links into variables by first going to parent then selecting all the children using the .closest() method
+// We do the same for our logo image, our selector is for any image tag as you see it doesn't have a dot in front of it.
+// nav.addEventListener('mouseover', function (e) {
+//   if (e.target.classList.contains('nav__link')) {
+//     const link = e.target;
+//     const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+//     const logo = link.closest('.nav').querySelector('img');
+//     // we check the siblings, and if they are NOT, the current target link, then we want to change the opacity to be lower, default is 1 (ie less clear)
+//     siblings.forEach(el => {
+//       if (el !== link) el.style.opacity = 0.5;
+//     });
+//     logo.style.opacity = 0.5; // add opacity to logo as well to block out
+//   }
+// });
+// // our 'mouseout' portion of function will reset our effect. When put our mouse away from the navigation- we just change opacity to 1 to make it not see through. (opaque means not see-through)
+// nav.addEventListener('mouseout', function (e) {
+//   if (e.target.classList.contains('nav__link')) {
+//     const link = e.target;
+//     const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+//     const logo = link.closest('.nav').querySelector('img');
+//     // we check the siblings, and if they are NOT, the current target link, then we want to change the opacity to be higher(ie less clear)
+//     siblings.forEach(el => {
+//       if (el !== link) el.style.opacity = 1;
+//     });
+//     logo.style.opacity = 1;
+//   }
+// });
+
+// The above code, however is repetitive. DRY principle.
+// So we refactor and include both variations in one function.
+// We just need to keep what is the same in both, and make the differences dynamic.(ie changeable)
+// So we will take the opacity, which is different in both, and then change it to argument that we will pass into function.
+
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this; // we set it equal to opacity
+    });
+    logo.style.opacity = this; // we set it equal to opacity
+  }
+};
+
+// .addEventListener() expects a function, so how do we call handleHover() function inside our .addEventListener?
+// We could put an event handler function inside and manually pass our event and opacity into it like this and it would work.
+// nav.addEventListener('mouseover', function(e) {
+//   handleHover(e, 0.5)
+// })
+// nav.addEventListener('mouseout', function (e) {
+//   handleHover(e, 1);
+// })
+
+// However, we can do better and remove anonymous callback functions by using .bind() method. The .bind() method creates a copy of the function, and when called sets it 'this' keyword to it to the value provided. So in our case upon hovering the 'this' keyword will show either 0.5 or 1 depending on where your mouse is hovering. Usually, the 'this' = current target, but  here we set the 'this' keyword manually using the .bind() method and it's argument. We can then set our opacity equal to 'this' which is either 0.5 or 1 based on location of moouse hover. See handleHover function above in siblings check.
+
+// It is impossible to pass another argument besides e, into and event handler function. If you want to pass something beside event, then you must use the .bind() method. If you want to pass multiple values into the event handler then you would set the argument of the .bind() method as an array or an object.
+nav.addEventListener('mouseover', handleHover.bind(0.5)); // we need opacity of 0.5 here
+nav.addEventListener('mouseout', handleHover.bind(1)); // we need opacity of 1 here
