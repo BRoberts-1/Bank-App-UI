@@ -628,7 +628,7 @@ headerObserver.observe(header);
 const allSections = document.querySelectorAll('.section');
 const revealSection = function (entries, observer) {
   const [entry] = entries; // destructoring into an array
-  console.log(entry);
+  // console.log(entry);
   // in order to get only the section we cross and not all the sections we have an observer on, we grab entry.target and then manipulate the classList
 
   // we will put a 'guard clause' for the first section because it is already revealed due to the other observer
@@ -647,3 +647,46 @@ allSections.forEach(function (section) {
   sectionObserver.observe(section); // we are putting our observer on each section
   section.classList.add('section--hidden'); // we add this class to all the sections in order to hide the section
 });
+
+// Section 199 - Lazy loading images effect
+
+// Image loading has a major impact upon website performance and therefore very important to optimize images.
+
+// To accomplish the lazy loading of the images we need a very low resolution image and a high resolution image. In the HTMl file in the 'features' class you will see an image which is 200X120 and is 16kB, while the high resolution is approx. 1/2MB(ie 500KB)
+
+// We load our low resolution with page so img with src=pathway, and we use the "data-src" attributeto reference our high resolution image
+
+// We also have to have a class on the original image that blurs the image. It is simply has filter: blur(20px)
+
+// We then replace our original image with our high resolutin image and then remove the class from the image that blurs the image.
+
+// LAZY LOADING IMAGES
+// we need to select our targets to observe. we will use all images that have the 'data-src' attribute because that is unique to the ones we want. we can select for elements that contain 'data-src' property in CSS. See below:
+const imgTargets = document.querySelectorAll('img[data-src]');
+
+// we will need our callback function:
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+  // console.log(entry);
+  // again we will use a guard clause
+  if (!entry.isIntersecting) return;
+  // else, we want to  replace the src attribute with the data-src attribute. We do this by setting src equal to data-src
+  entry.target.src = entry.target.dataset.src;
+  // the way to remove the lazy class is to wait for the high-resolution image to load, and then when it finishes loading an event is created called a load-event. On the 'load event' we can put an eventListener.
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
+  });
+
+  // to stop the observer from slowing down performance
+  observer.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '-200px', // delays loading or increases loading depending if positive or negative
+});
+
+// we need to attach observer to all of our target elements
+imgTargets.forEach(img => imgObserver.observe(img));
