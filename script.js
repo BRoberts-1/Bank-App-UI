@@ -104,8 +104,8 @@ console.log(document.body); // selcets entire body element
 // const header = document.querySelector('.header'); // returns first element with this name
 
 // If we want to select many elements with the same name we use .querySelectorALL()
-const allSections = document.querySelectorAll('.section'); // returns all the many elements with name
-console.log(allSections); // returns: node list that contains all the elements
+// const allSections = document.querySelectorAll('.section'); // returns all the many elements with name
+// console.log(allSections); // returns: node list that contains all the elements
 
 // The above methods are also available not just on the document, but also on all the child elements
 
@@ -596,7 +596,7 @@ nav.addEventListener('mouseout', handleHover.bind(1)); // we need opacity of 1 h
 // So we start by selecting our header element:
 const header = document.querySelector('.header');
 const navHeight = nav.getBoundingClientRect().height; // our height property on our nav element
-console.log(navHeight);
+// console.log(navHeight);
 
 const stickyNav = function (entries) {
   const [entry] = entries; //destructoring our entries into an array
@@ -614,3 +614,36 @@ const headerObserver = new IntersectionObserver(stickyNav, {
 
 // finally we call our observer function
 headerObserver.observe(header);
+
+// Section 198 - Revealing elements on Scrolling
+
+// Sections will appear to have a slide-into-view effect
+// We accomplish this by adding a class using the intersectionalobserver API to trigger it.
+
+// We have a selector in CSS file called .section-hidden, the opacity is 0(which means completely invisible-not seen at all). The class also has a transformY of 8rem which will move the elements a little bit downward from the top of the page to start off with. So we will add this class to all the elements we want to hide and slide.
+
+// The animation will set the opacity to 1 and the translateY back to 0rem.
+
+////////// The reveal sections effect
+const allSections = document.querySelectorAll('.section');
+const revealSection = function (entries, observer) {
+  const [entry] = entries; // destructoring into an array
+  console.log(entry);
+  // in order to get only the section we cross and not all the sections we have an observer on, we grab entry.target and then manipulate the classList
+
+  // we will put a 'guard clause' for the first section because it is already revealed due to the other observer
+  if (!entry.isIntersecting) return; //if not, then return else, exe below code
+  entry.target.classList.remove('section--hidden');
+  // we then need to unobserve our entry.target, otherwise it keeps creating events. We use .unobserve() This will improve performance.
+  observer.unobserve(entry.target);
+  //once it reveals, it stays revealed unless user reloads page
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.15, // 15% to allow a delay as we enter viewport, 0 is right away
+});
+allSections.forEach(function (section) {
+  sectionObserver.observe(section); // we are putting our observer on each section
+  section.classList.add('section--hidden'); // we add this class to all the sections in order to hide the section
+});
