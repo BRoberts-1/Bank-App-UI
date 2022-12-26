@@ -645,7 +645,7 @@ const sectionObserver = new IntersectionObserver(revealSection, {
 });
 allSections.forEach(function (section) {
   sectionObserver.observe(section); // we are putting our observer on each section
-  section.classList.add('section--hidden'); // we add this class to all the sections in order to hide the section
+  // section.classList.add('section--hidden'); // we add this class to all the sections in order to hide the section
 });
 
 // Section 199 - Lazy loading images effect
@@ -690,3 +690,93 @@ const imgObserver = new IntersectionObserver(loadImg, {
 
 // we need to attach observer to all of our target elements
 imgTargets.forEach(img => imgObserver.observe(img));
+
+// Section 200 - Building Slider Component part 1
+
+// A slider component that slides on arrow clicks or on selection of dots at bottom of page. When it gets to the last slide it just starts over at the first slide.
+
+// Slider content is already set side by side. We use a translateX to move the elements as we click, the overflow: hidden. So translateX is 0% for seen slide the previous slide is -100% and the next slide is 100% for translateX. We program this to be dynamic for all these settings. See below:
+
+// we first select our elements with the name 'slide'. We don't care about our content within, just about our slide container.
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+
+// we will loop through our slides (s) for slide, (i) for index of slide and set the style of transform: translateX
+// the width of our box is 100% so we set our four boxes(here images) to 0%, 100%, 200%, 300%. We can do this by using the index numbers to calculate the numbers we need to set dynamically. So, we multiply by 100% for each index number. 0 * 100% = 0, 1 * 100% = 100, etc.
+
+// We start with storing our 0 value in a mutable variable curSlide, and then just increment up to update it.
+let curSlide = 0;
+// We have to have our slider stop advancing or it will just keep on going.
+// what we do is define the end in a variable;
+const maxSlide = slides.length; // we can read length of node list like on an array
+
+// const slider = document.querySelector('.slider');
+// slider.style.transform = 'scale(0.4) translateX(-800px)';
+// slider.style.overflow = 'visible';
+
+// slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i}%)`));
+// the above code is already in the goToSlide function below, but we just need to set the beginning slide to 0 to start with. See line below: goToSlide(0)
+
+// For click to next slide
+// We add our eventListener on our button:
+// btnRight.addEventListener('click', function () {
+//   if (curSlide === maxSlide - 1) {
+//     //length is not zero based, so we subtract 1 to make it zero based
+//     // if our current slide equals the length of all the slides we have(ie the end of the slides) then set..
+//     curSlide = 0; // this returns us back to beginning of slides
+//   } else {
+//     // else, increase the current slide by 1
+//     curSlide++;
+//   }
+
+//   slides.forEach(
+//     // this allows dynamic transition of placment position as we click on our button
+//     (s, i) => (s.style.transform = `translateX(${100 * (i - curSlide)}%)`)
+//   );
+// });
+
+// We can then refactor the code to have the slides update into its own function.
+const goToSlide = function (slide) {
+  slides.forEach(
+    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+  );
+};
+goToSlide(0);
+
+// btnRight.addEventListener('click', function () {
+//   if (curSlide === maxSlide - 1) {
+//     curSlide = 0;
+//   } else {
+//     curSlide++;
+//   }
+
+//   goToSlide(curSlide);
+// });
+
+// We can refactor a little more by taking a step and putting it into it's own function and then calling it in the other function as an argument.
+const nextSlide = function () {
+  if (curSlide === maxSlide - 1) {
+    curSlide = 0;
+  } else {
+    curSlide++;
+  }
+
+  goToSlide(curSlide);
+};
+
+const prevSlide = function () {
+  if (curSlide === 0) {
+    // if we are at the origin slide(ie the 1st slide), then we need set our curSlide variable to the length of our slides minus one to make it a zero base. See below:
+    curSlide = maxSlide - 1;
+  } else {
+    curSlide--;
+  }
+
+  goToSlide(curSlide);
+};
+// to stop the slider from going past the first slide(ie to limit it like we did for the other direction, we add a conditional to our preSlide function
+btnRight.addEventListener('click', nextSlide);
+btnLeft.addEventListener('click', prevSlide);
+
+// then we need to add an eventlistener for the left button and add a function for that direction. We just need to decrement the slide with curSlide --;
