@@ -894,3 +894,30 @@ window.addEventListener('load', function (e) {
 //   console.log(e);
 //   e.returnValue = ''; //must put this to see the event. this is from historical(legacy JS) reasons
 // });
+
+// Section 203 - Efficient Script Loading: defer and async
+
+// Ways to add JS tag to HTML:
+// 1) <script src="script.js"></script> added to the end of body element
+// 2) <script async src="script.js"></script>
+// 3) <script defer src="script.js"></script>
+
+// We can add the <script></script> tag to the <head></head> or to the <body></body> of the HTML
+
+// If you put script tag in head: then HTML begins to parse, then it fetches the script and executes it and only then finishing parsing the HTML. This is very bad for pages performance. And also, the script needs to execute after the DOM is ready and not before. DON'T DO THIS OPTION.
+
+// Instead if you put script tag at the end of the body of HTML, then it will parse and build DOM tree completely and only then fetch and execute the JS. This is fine, but not ideal because the script could have been fetched and only executed after the DOM tree was built.
+
+// So the next option is using the 'async' attribute with the script tag in the head. However, here the HTML begins to be parsed, then the script is fetched and executed immediately asynchronously, and only after does the HTML finish to load. Again not ideal.
+
+// The last option is to put the 'defer' attribute into the script tag at the head of the HTML. This is most used because it begins to parse the HTML AND fetches the script, finishes the DOM and only afterwards executes the script.
+
+// There is not such thing to put the defer and async in the body because it would be the same as only executing the script after the HTML has finished parsing.
+
+// With 'async' the DOMContentLoaded event does NOT wait for the async sciprt, even though usually it waits for all scripts to execute first. So if you have a big script to run, the HTML will finish parsing, the DOMContentLoaded event will fire and only then will the script run or finish running. Also, 'async' does not guarantee that the scripts will be executed in order.
+
+// With the 'defer' attribute scripts are fetched asynchronously and only executed after the HTML is completely parsed. The DOMContentLoaded event fires only after the script is executed. And scripts are executed in order guaranteed.
+
+// So the best option is the 'defer' attribute in the head tag. Also, any libraries that your code depends on should be used with defer before your own JS if you JS depends on it. However, any scripts that you own code doesn't need to depend on or interact with you can use the 'async' attribute eg google analytics.
+
+// Only modern browsers recognize 'async' and 'defer', so for old browsers you must put your scripts at the end of the body tag in HTML.
