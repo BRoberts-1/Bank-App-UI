@@ -600,7 +600,7 @@ const navHeight = nav.getBoundingClientRect().height; // our height property on 
 
 const stickyNav = function (entries) {
   const [entry] = entries; //destructoring our entries into an array
-  console.log(entry);
+  // console.log(entry);
 
   if (!entry.isIntersecting) nav.classList.add('sticky');
   else nav.classList.remove('sticky');
@@ -862,4 +862,35 @@ const slider = function () {
 slider(); // we could then pass in an object which contains options or whatever else we wanted to pass into it.
 
 // We can then refactor by putting all of our function calls to initialize this in its own function. Then we can put all of those functions into its own function as well so as not to pollute the global name space.
-//
+
+// Section 202 - Lifecycle DOM Events
+
+// Lifecycle is defined as when page is first accessed right until user leaves the page
+
+// DOMcontentloaded event occurs as soon as the HTML is parsed(ie the HTML has been downloaded and converted to the DOM tree)
+
+// NOTE: All scripts(ie JS etc) must be downloaded and executed before the DOMContentLoaded event can happen. It does not wait for images or other external resources to load only for HTML and JS.
+
+// Let's take a look at this event in the console:
+document.addEventListener('DOMContentLoaded', function (e) {
+  console.log('HTML parsed and DOM tree built!', e);
+});
+
+// You want the HTML and DOM tree built and loaded first before executing JS
+// We can put our <script></script> tag right at the end of the body of our HTML in order to load and execute our JS. This means we don't have to listen for the DOMContentLoaded event and then execute our JS because it is already at the end.
+
+// The next event we will look at is called the LoadEvent, which is triggered by the window and occurs after everything has been loaded and all scripts executed even external resources.
+
+// To log the Load event:
+window.addEventListener('load', function (e) {
+  console.log('Page fully loaded!', e);
+});
+
+// Last event to know about is the beforeunload event which occurs right before the user leaves the page. It is triggered by the user closing the window and is logged.
+
+// We we log this event, some browsers need you to add the e.preventDefault() function:
+// window.addEventListener('beforeunload', function (e) {
+//   e.preventDefault();
+//   console.log(e);
+//   e.returnValue = ''; //must put this to see the event. this is from historical(legacy JS) reasons
+// });
