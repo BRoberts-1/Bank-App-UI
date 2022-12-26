@@ -698,85 +698,168 @@ imgTargets.forEach(img => imgObserver.observe(img));
 // Slider content is already set side by side. We use a translateX to move the elements as we click, the overflow: hidden. So translateX is 0% for seen slide the previous slide is -100% and the next slide is 100% for translateX. We program this to be dynamic for all these settings. See below:
 
 // we first select our elements with the name 'slide'. We don't care about our content within, just about our slide container.
-const slides = document.querySelectorAll('.slide');
-const btnLeft = document.querySelector('.slider__btn--left');
-const btnRight = document.querySelector('.slider__btn--right');
 
-// we will loop through our slides (s) for slide, (i) for index of slide and set the style of transform: translateX
-// the width of our box is 100% so we set our four boxes(here images) to 0%, 100%, 200%, 300%. We can do this by using the index numbers to calculate the numbers we need to set dynamically. So, we multiply by 100% for each index number. 0 * 100% = 0, 1 * 100% = 100, etc.
+// Slider
 
-// We start with storing our 0 value in a mutable variable curSlide, and then just increment up to update it.
-let curSlide = 0;
-// We have to have our slider stop advancing or it will just keep on going.
-// what we do is define the end in a variable;
-const maxSlide = slides.length; // we can read length of node list like on an array
+// We then wrap a function around all of our functions and make a function call on this container.
 
-// const slider = document.querySelector('.slider');
-// slider.style.transform = 'scale(0.4) translateX(-800px)';
-// slider.style.overflow = 'visible';
+const slider = function () {
+  const slides = document.querySelectorAll('.slide');
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  const dotContainer = document.querySelector('.dots');
 
-// slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i}%)`));
-// the above code is already in the goToSlide function below, but we just need to set the beginning slide to 0 to start with. See line below: goToSlide(0)
+  // we will loop through our slides (s) for slide, (i) for index of slide and set the style of transform: translateX
+  // the width of our box is 100% so we set our four boxes(here images) to 0%, 100%, 200%, 300%. We can do this by using the index numbers to calculate the numbers we need to set dynamically. So, we multiply by 100% for each index number. 0 * 100% = 0, 1 * 100% = 100, etc.
 
-// For click to next slide
-// We add our eventListener on our button:
-// btnRight.addEventListener('click', function () {
-//   if (curSlide === maxSlide - 1) {
-//     //length is not zero based, so we subtract 1 to make it zero based
-//     // if our current slide equals the length of all the slides we have(ie the end of the slides) then set..
-//     curSlide = 0; // this returns us back to beginning of slides
-//   } else {
-//     // else, increase the current slide by 1
-//     curSlide++;
-//   }
+  // We start with storing our 0 value in a mutable variable curSlide, and then just increment up to update it.
+  let curSlide = 0;
+  // We have to have our slider stop advancing or it will just keep on going.
+  // what we do is define the end in a variable;
+  const maxSlide = slides.length; // we can read length of node list like on an array
 
-//   slides.forEach(
-//     // this allows dynamic transition of placment position as we click on our button
-//     (s, i) => (s.style.transform = `translateX(${100 * (i - curSlide)}%)`)
-//   );
-// });
+  // const slider = document.querySelector('.slider');
+  // slider.style.transform = 'scale(0.4) translateX(-800px)';
+  // slider.style.overflow = 'visible';
 
-// We can then refactor the code to have the slides update into its own function.
-const goToSlide = function (slide) {
-  slides.forEach(
-    (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
-  );
+  // slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i}%)`));
+  // the above code is already in the goToSlide function below, but we just need to set the beginning slide to 0 to start with. See line below: goToSlide(0)
+
+  // For click to next slide
+  // We add our eventListener on our button:
+  // btnRight.addEventListener('click', function () {
+  //   if (curSlide === maxSlide - 1) {
+  //     //length is not zero based, so we subtract 1 to make it zero based
+  //     // if our current slide equals the length of all the slides we have(ie the end of the slides) then set..
+  //     curSlide = 0; // this returns us back to beginning of slides
+  //   } else {
+  //     // else, increase the current slide by 1
+  //     curSlide++;
+  //   }
+
+  //   slides.forEach(
+  //     // this allows dynamic transition of placment position as we click on our button
+  //     (s, i) => (s.style.transform = `translateX(${100 * (i - curSlide)}%)`)
+  //   );
+  // });
+
+  // creating a new function for the dots:
+  // the dots are marked up with div and class="dots" for container and within are button elements <button></button> with the class="dots__dot" and data attribute data-slide=""
+  // we want to create one element for each of the slides, so we loop over them and adding the element using 'beforeend' which adds it as the last child always. With the data attribute dynamically changes for each element. Then don't forget to call the function createDots:
+
+  // Here are all of our functions below:
+
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide="${i}"></button>`
+      );
+    });
+  };
+
+  // We put the function call for createDots in an init() function -see below
+
+  // We now have to create a function that will show which dot is active by adding a special class to the dot which is selected. We can then call that function in all of our 'click' events. So, like the other section above, we implement this by adding the class to all the dots, and taking it away from all, before we add the active class to one:
+
+  const activateDot = function (slide) {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+    //now we must select the dot element we want and add the active class back to it by using the data attribute and checking if it has a certain value(which value? ans: the value of slide)with that data attribute
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+  // We must call this function right-away to show the active dot on the page, We use the 0 to start it off in the 0 index?
+
+  // We put the function call into another function called init() see below
+
+  // We can then refactor the code to have the slides update into its own function.
+  const goToSlide = function (slide) {
+    slides.forEach(
+      (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
+    );
+  };
+
+  // we originally called this goToSlide() function here, but then we made an init function where we call all of the functions into this function container
+
+  // btnRight.addEventListener('click', function () {
+  //   if (curSlide === maxSlide - 1) {
+  //     curSlide = 0;
+  //   } else {
+  //     curSlide++;
+  //   }
+
+  //   goToSlide(curSlide);
+  // });
+
+  // We can refactor a little more by taking a step and putting it into it's own function and then calling it in the other function as an argument.
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) {
+      curSlide = 0;
+    } else {
+      curSlide++;
+    }
+
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  const prevSlide = function () {
+    if (curSlide === 0) {
+      // if we are at the origin slide(ie the 1st slide), then we need set our curSlide variable to the length of our slides minus one to make it a zero base. See below:
+      curSlide = maxSlide - 1;
+    } else {
+      curSlide--;
+    }
+
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+  // to stop the slider from going past the first slide(ie to limit it like we did for the other direction, we add a conditional to our preSlide function
+
+  const init = function () {
+    goToSlide(0);
+    createDots();
+
+    activateDot(0);
+  };
+  init();
+  //Event handlers
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
+
+  // then we need to add an eventlistener for the left button and add a function for that direction. We just need to decrement the slide with curSlide --;
+
+  // Section 201 Building a Slider Component: Part 2
+
+  // Implementing same funcitonality with the dots below and the keyboard arrow keys
+  // We attach an event handler to a keyboard event:
+  // we log event to see what pushing the arrow key is called. It is called 'ArrowRight' and 'ArrowLeft'
+  document.addEventListener('keydown', function (e) {
+    // console.log(e);
+
+    // can choose from two options below: 1) if statements 2) short-circuiting
+    //1) if statements
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'ArrowRight') nextSlide();
+    // 2) short-circuiting
+    // e.key === 'ArrowLeft' && prevSlide();
+    // e.key === 'ArrowRight' && nextSlide();
+  });
+
+  // Here we attach our button dots to their respective slides using the dataset attribute with the slide number
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      const { slide } = e.target.dataset; //destructuring into an object this dataset with value slide from our event target
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
 };
-goToSlide(0);
+slider(); // we could then pass in an object which contains options or whatever else we wanted to pass into it.
 
-// btnRight.addEventListener('click', function () {
-//   if (curSlide === maxSlide - 1) {
-//     curSlide = 0;
-//   } else {
-//     curSlide++;
-//   }
-
-//   goToSlide(curSlide);
-// });
-
-// We can refactor a little more by taking a step and putting it into it's own function and then calling it in the other function as an argument.
-const nextSlide = function () {
-  if (curSlide === maxSlide - 1) {
-    curSlide = 0;
-  } else {
-    curSlide++;
-  }
-
-  goToSlide(curSlide);
-};
-
-const prevSlide = function () {
-  if (curSlide === 0) {
-    // if we are at the origin slide(ie the 1st slide), then we need set our curSlide variable to the length of our slides minus one to make it a zero base. See below:
-    curSlide = maxSlide - 1;
-  } else {
-    curSlide--;
-  }
-
-  goToSlide(curSlide);
-};
-// to stop the slider from going past the first slide(ie to limit it like we did for the other direction, we add a conditional to our preSlide function
-btnRight.addEventListener('click', nextSlide);
-btnLeft.addEventListener('click', prevSlide);
-
-// then we need to add an eventlistener for the left button and add a function for that direction. We just need to decrement the slide with curSlide --;
+// We can then refactor by putting all of our function calls to initialize this in its own function. Then we can put all of those functions into its own function as well so as not to pollute the global name space.
+//
